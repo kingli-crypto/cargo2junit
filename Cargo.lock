@@ -60,9 +60,9 @@ checksum = "dd25036021b0de88a0aff6b850051563c6516d0bf53f8638938edbb9de732736"
 
 [[package]]
 name = "junit-report"
-version = "0.5.0"
+version = "0.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5c141da489e41a4ce6fe7c5242ce053616072cdb9827a596fa60b7d46e32cc2a"
+checksum = "4bc92bb61f860b8a88189e67820acdb13fd00149dac50fa365b232d27de34a18"
 dependencies = [
  "chrono",
  "derive-getters",

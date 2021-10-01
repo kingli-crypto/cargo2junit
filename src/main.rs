@@ -1,11 +1,12 @@
 extern crate junit_report;
 extern crate serde;
 
-use junit_report::*;
-use serde::{Deserialize, Serialize};
 use std::env;
 use std::io::*;
 use std::{borrow::Cow, collections::BTreeSet};
+
+use junit_report::*;
+use serde::{Deserialize, Serialize};
 
 const SYSTEM_OUT_MAX_LEN: usize = 65536;
 
@@ -161,14 +162,16 @@ fn parse<T: BufRead>(
                 SuiteEvent::Started { test_count: _ } => {
                     assert!(current_suite_maybe.is_none());
                     assert!(tests.is_empty());
-                    let ts = TestSuite::new(&format!("{} #{}", suite_name_prefix, suite_index))
-                        .set_timestamp(timestamp);
+                    let ts =
+                        TestSuiteBuilder::new(&format!("{} #{}", suite_name_prefix, suite_index))
+                            .set_timestamp(timestamp)
+                            .build();
                     current_suite_maybe = Some(ts);
                     suite_index += 1;
                 }
                 SuiteEvent::Ok { results: _ } | SuiteEvent::Failed { results: _ } => {
                     assert_eq!(None, tests.iter().next());
-                    r = r.add_testsuite(
+                    r.add_testsuite(
                         current_suite_maybe.expect("Suite complete event found outside of suite!"),
                     );
                     current_suite_maybe = None;
@@ -197,8 +200,10 @@ fn parse<T: BufRead>(
                     TestEvent::Ok { name } => {
                         assert!(tests.remove(name));
                         let (name, module_path) = split_name(&name);
-                        current_suite = current_suite.add_testcase(
-                            TestCase::success(&name, duration).set_classname(module_path.as_str()),
+                        current_suite.add_testcase(
+                            TestCaseBuilder::success(&name, duration)
+                                .set_classname(module_path.as_str())
+                                .build(),
                         );
                     }
                     TestEvent::Failed {
@@ -209,13 +214,14 @@ fn parse<T: BufRead>(
                         assert!(tests.remove(name));
                         let (name, module_path) = split_name(&name);
 
-                        let mut failure = TestCase::failure(
+                        let mut failure = TestCaseBuilder::failure(
                             &name,
                             duration,
                             "cargo test",
                             &format!("failed {}::{}", module_path.as_str(), &name),
                         )
-                        .set_classname(module_path.as_str());
+                        .set_classname(module_path.as_str())
+                        .build();
 
                         fn truncate(s: &str, max_len: usize) -> Cow<'_, str> {
                             if s.len() > max_len {
@@ -233,18 +239,18 @@ fn parse<T: BufRead>(
                         }
 
                         if let Some(stdout) = stdout {
-                            failure = failure.set_system_out(&truncate(stdout, max_out_len));
+                            failure.set_system_out(&truncate(stdout, max_out_len));
                         }
 
                         if let Some(stderr) = stderr {
-                            failure = failure.set_system_err(&truncate(stderr, max_out_len));
+                            failure.set_system_err(&truncate(stderr, max_out_len));
                         }
 
-                        current_suite = current_suite.add_testcase(failure);
+                        current_suite.add_testcase(failure);
                     }
                     TestEvent::Ignored { name } => {
                         assert!(tests.remove(name));
-                        current_suite = current_suite.add_testcase(TestCase::skipped(name));
+                        current_suite.add_testcase(TestCase::skipped(name));
                     }
                     TestEvent::Timeout { name: _ } => {
                         // An informative timeout event is emitted after a test has been running for
@@ -288,11 +294,14 @@ fn main() -> Result<()> {
 
 #[cfg(test)]
 mod tests {
-    use super::SYSTEM_OUT_MAX_LEN;
-    use crate::parse;
+    use std::io::*;
+
     use junit_report::*;
     use regex::Regex;
-    use std::io::*;
+
+    use crate::parse;
+
+    use super::SYSTEM_OUT_MAX_LEN;
 
     fn parse_bytes(bytes: &[u8], max_stdout_len: usize) -> Result<Report> {
         parse(
