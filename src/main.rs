@@ -1,9 +1,10 @@
 extern crate junit_report;
 extern crate serde;
 
+use std::borrow::Cow;
+use std::collections::HashMap;
 use std::env;
 use std::io::*;
-use std::{borrow::Cow, collections::BTreeSet};
 
 use junit_report::*;
 use serde::{Deserialize, Serialize};
@@ -14,6 +15,32 @@ const SYSTEM_OUT_MAX_LEN: usize = 65536;
 struct SuiteResults {
     passed: usize,
     failed: usize,
+}
+
+#[derive(Debug, PartialEq, Eq)]
+struct TestCaseDetail {
+    start_time: DateTime<Utc>,
+}
+
+#[derive(Serialize, Deserialize, Debug, PartialEq, Eq)]
+enum DurationPrecision {
+    MilliSeconds,
+    LiteralSeconds
+}
+
+impl DurationPrecision {
+    pub fn trunc(&self, duration : Duration) -> Duration {
+        match &self {
+            Self::MilliSeconds => Duration::microseconds(duration.num_microseconds().unwrap_or(0)),
+            Self::LiteralSeconds => Duration::seconds(duration.num_seconds()),
+        }
+    }
+}
+
+impl TestCaseDetail {
+    pub fn get_duration(&self, now: DateTime<Utc>) -> Duration {
+        now - self.start_time
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq)]
@@ -77,7 +104,7 @@ enum Event {
 }
 
 impl Event {
-    fn get_duration(&self) -> Duration {
+    fn get_duration(&self) -> Option<Duration> {
         match &self {
             Event::Suite { event: _ } => panic!(),
             Event::TestStringTime {
@@ -90,13 +117,16 @@ impl Event {
                         assert_eq!(s.chars().last(), Some('s'));
                         let seconds_chars = &(s[0..(s.len() - 1)]);
                         let seconds = seconds_chars.parse::<f64>().unwrap();
-                        (seconds * 1_000_000_000.0) as i64
+                        Some((seconds * 1_000_000_000.0) as i64)
                     }
-                    (Some(ms), None) => (ms * 1_000_000.0) as i64,
-                    (None, None) => 0,
+                    (Some(ms), None) => Some((ms * 1_000_000.0) as i64),
+                    (None, None) => None,
                 };
 
-                Duration::nanoseconds(duration_ns)
+                match duration_ns {
+                    Some(duration) => Some(Duration::nanoseconds(duration)),
+                    None => None,
+                }
             }
             Event::TestFloatTime {
                 event: _,
@@ -104,12 +134,15 @@ impl Event {
                 exec_time,
             } => {
                 let duration_ns = match (duration, exec_time) {
-                    (_, Some(seconds)) => (seconds * 1_000_000_000.0) as i64,
-                    (Some(ms), None) => (ms * 1_000_000.0) as i64,
-                    (None, None) => 0,
+                    (_, Some(seconds)) => Some((seconds * 1_000_000_000.0) as i64),
+                    (Some(ms), None) => Some((ms * 1_000_000.0) as i64),
+                    (None, None) => None,
                 };
 
-                Duration::nanoseconds(duration_ns)
+                match duration_ns {
+                    Some(duration) => Some(Duration::nanoseconds(duration)),
+                    None => None,
+                }
             }
         }
     }
@@ -127,11 +160,12 @@ fn parse<T: BufRead>(
     suite_name_prefix: &str,
     timestamp: DateTime<Utc>,
     max_out_len: usize,
+    precision: DurationPrecision
 ) -> Result<Report> {
     let mut r = Report::new();
     let mut suite_index = 0;
     let mut current_suite_maybe: Option<TestSuite> = None;
-    let mut tests: BTreeSet<String> = BTreeSet::new();
+    let mut tests: HashMap<String, TestCaseDetail> = HashMap::new();
 
     for line in input.lines() {
         let line = line?;
@@ -195,15 +229,27 @@ fn parse<T: BufRead>(
 
                 match event {
                     TestEvent::Started { name } => {
-                        assert!(tests.insert(name.clone()));
+                        assert!(tests
+                            .insert(
+                                name.clone(),
+                                TestCaseDetail {
+                                    start_time: Utc::now()
+                                }
+                            )
+                            .is_none());
                     }
                     TestEvent::Ok { name } => {
-                        assert!(tests.remove(name));
+                        let now = Utc::now();
+                        let detail = tests.remove(name).unwrap();
+
                         let (name, module_path) = split_name(&name);
                         current_suite.add_testcase(
-                            TestCaseBuilder::success(&name, duration)
-                                .set_classname(module_path.as_str())
-                                .build(),
+                            TestCaseBuilder::success(
+                                &name,
+                                precision.trunc(duration.unwrap_or(detail.get_duration(now))),
+                            )
+                            .set_classname(module_path.as_str())
+                            .build(),
                         );
                     }
                     TestEvent::Failed {
@@ -211,12 +257,13 @@ fn parse<T: BufRead>(
                         stdout,
                         stderr,
                     } => {
-                        assert!(tests.remove(name));
-                        let (name, module_path) = split_name(&name);
+                        let now = Utc::now();
+                        let detail = tests.remove(name).unwrap();
 
+                        let (name, module_path) = split_name(&name);
                         let mut failure = TestCaseBuilder::failure(
                             &name,
-                            duration,
+                            precision.trunc(duration.unwrap_or(detail.get_duration(now))),
                             "cargo test",
                             &format!("failed {}::{}", module_path.as_str(), &name),
                         )
@@ -249,7 +296,7 @@ fn parse<T: BufRead>(
                         current_suite.add_testcase(failure);
                     }
                     TestEvent::Ignored { name } => {
-                        assert!(tests.remove(name));
+                        assert!(tests.remove(name).is_some());
                         current_suite.add_testcase(TestCase::skipped(name));
                     }
                     TestEvent::Timeout { name: _ } => {
@@ -282,13 +329,13 @@ fn main() -> Result<()> {
             .expect("Failed to parse TEST_STDOUT_STDERR_MAX_LEN as a natural number"),
         Err(_) => SYSTEM_OUT_MAX_LEN,
     };
-    let report = parse(stdin, "cargo test", timestamp, max_out_len)?;
+    let report = parse(stdin, "cargo test", timestamp, max_out_len, DurationPrecision::MilliSeconds)?;
 
     let stdout = std::io::stdout();
     let stdout = stdout.lock();
     report
         .write_xml(stdout)
-        .map_err(|e| Error::new(ErrorKind::Other, format!("{}", e)))?;
+        .map_err(|e| Error::new(ErrorKind::Other, format!("{:#}", e)))?;
     Ok(())
 }
 
@@ -299,7 +346,7 @@ mod tests {
     use junit_report::*;
     use regex::Regex;
 
-    use crate::parse;
+    use crate::{DurationPrecision, parse};
 
     use super::SYSTEM_OUT_MAX_LEN;
 
@@ -309,6 +356,17 @@ mod tests {
             "cargo test",
             Utc::now(),
             max_stdout_len,
+            DurationPrecision::LiteralSeconds
+        )
+    }
+
+    fn parse_bytes_milli(bytes: &[u8], max_stdout_len: usize) -> Result<Report> {
+        parse(
+            BufReader::new(bytes),
+            "cargo test",
+            Utc::now(),
+            max_stdout_len,
+            DurationPrecision::MilliSeconds
         )
     }
 
@@ -339,20 +397,20 @@ mod tests {
 
     #[test]
     fn success_self() {
-        let report = parse_bytes(include_bytes!("test_inputs/self.json"), SYSTEM_OUT_MAX_LEN)
+        let report = parse_bytes_milli(include_bytes!("test_inputs/self.json"), SYSTEM_OUT_MAX_LEN)
             .expect("Could not parse test input");
         let suite = &report.testsuites()[0];
         let test_cases = suite.testcases();
         assert_eq!(test_cases[0].name(), "error_on_garbage");
         assert_eq!(*test_cases[0].classname(), Some("tests".to_string()));
-        assert_eq!(test_cases[0].time(), &Duration::nanoseconds(213_100));
+        assert_eq!(test_cases[0].time(), &Duration::nanoseconds(213_000));
 
         assert_output(&report, include_bytes!("expected_outputs/self.out"));
     }
 
     #[test]
     fn success_self_exec_time() {
-        let report = parse_bytes(
+        let report = parse_bytes_milli(
             include_bytes!("test_inputs/self_exec_time.json"),
             SYSTEM_OUT_MAX_LEN,
         )
