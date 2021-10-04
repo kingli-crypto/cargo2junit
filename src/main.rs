@@ -275,6 +275,8 @@ fn main() -> Result<()> {
     let stdin = std::io::stdin();
     let stdin = stdin.lock();
 
+    let suite_name_prefix  = env::var("TEST_SUITE_PREFIX").unwrap_or("cargo test".to_string());
+
     // GitLab fails to parse the Junit XML if stdout is too long.
     let max_out_len = match env::var("TEST_STDOUT_STDERR_MAX_LEN") {
         Ok(val) => val
@@ -282,7 +284,7 @@ fn main() -> Result<()> {
             .expect("Failed to parse TEST_STDOUT_STDERR_MAX_LEN as a natural number"),
         Err(_) => SYSTEM_OUT_MAX_LEN,
     };
-    let report = parse(stdin, "cargo test", timestamp, max_out_len)?;
+    let report = parse(stdin, &suite_name_prefix, timestamp, max_out_len)?;
 
     let stdout = std::io::stdout();
     let stdout = stdout.lock();
