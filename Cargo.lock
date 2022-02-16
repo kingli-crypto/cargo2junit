@@ -54,8 +54,7 @@ checksum = "1aab8fc367588b89dcee83ab0fd66b72b50b72fa1904d7095045ace2b0c81c35"
 [[package]]
 name = "junit-report"
 version = "0.7.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "42b056c67be8e1fe9cb76b1649fba3f02bd238f384649878b814fdf9db40aace"
+source = "git+https://github.com/kingli-crypto/junit-report-rs?branch=feature/azure-devops-format#ed6086b14e91a3b6f2b2978395b6246747a8ce8e"
 dependencies = [
  "derive-getters",
  "strip-ansi-escapes",
