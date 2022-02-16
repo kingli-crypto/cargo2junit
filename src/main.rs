@@ -158,7 +158,7 @@ fn split_name(full_name: &str) -> (&str, String) {
 fn parse<T: BufRead>(
     input: T,
     suite_name_prefix: &str,
-    timestamp: DateTime<Utc>,
+    timestamp: OffsetDateTime,
     max_out_len: usize,
     precision: DurationPrecision
 ) -> Result<Report> {
@@ -196,10 +196,8 @@ fn parse<T: BufRead>(
                 SuiteEvent::Started { test_count: _ } => {
                     assert!(current_suite_maybe.is_none());
                     assert!(tests.is_empty());
-                    let ts =
-                        TestSuiteBuilder::new(&format!("{} #{}", suite_name_prefix, suite_index))
-                            .set_timestamp(timestamp)
-                            .build();
+                    let mut ts = TestSuite::new(&format!("{} #{}", suite_name_prefix, suite_index));
+                    ts.set_timestamp(timestamp);
                     current_suite_maybe = Some(ts);
                     suite_index += 1;
                 }
@@ -243,14 +241,9 @@ fn parse<T: BufRead>(
                         let detail = tests.remove(name).unwrap();
 
                         let (name, module_path) = split_name(&name);
-                        current_suite.add_testcase(
-                            TestCaseBuilder::success(
-                                &name,
-                                precision.trunc(duration.unwrap_or(detail.get_duration(now))),
-                            )
-                            .set_classname(module_path.as_str())
-                            .build(),
-                        );
+                        let mut tc = TestCase::success(&name, duration);
+                        tc.set_classname(module_path.as_str());
+                        current_suite.add_testcase(tc,);
                     }
                     TestEvent::Failed {
                         name,
@@ -266,9 +259,8 @@ fn parse<T: BufRead>(
                             precision.trunc(duration.unwrap_or(detail.get_duration(now))),
                             "cargo test",
                             &format!("failed {}::{}", module_path.as_str(), &name),
-                        )
-                        .set_classname(module_path.as_str())
-                        .build();
+                        );
+                            failure.set_classname(module_path.as_str());
 
                         fn truncate(s: &str, max_len: usize) -> Cow<'_, str> {
                             if s.len() > max_len {
@@ -296,7 +288,7 @@ fn parse<T: BufRead>(
                         current_suite.add_testcase(failure);
                     }
                     TestEvent::Ignored { name } => {
-                        assert!(tests.remove(name).is_some());
+                        assert!(tests.remove(name));
                         current_suite.add_testcase(TestCase::skipped(name));
                     }
                     TestEvent::Timeout { name: _ } => {
@@ -318,7 +310,7 @@ fn parse<T: BufRead>(
 }
 
 fn main() -> Result<()> {
-    let timestamp = Utc::now();
+    let timestamp = OffsetDateTime::now_utc();
     let stdin = std::io::stdin();
     let stdin = stdin.lock();
 
@@ -354,7 +346,7 @@ mod tests {
         parse(
             BufReader::new(bytes),
             "cargo test",
-            Utc::now(),
+            OffsetDateTime::now_utc(),
             max_stdout_len,
             DurationPrecision::LiteralSeconds
         )
@@ -376,7 +368,7 @@ mod tests {
 
     fn normalize(input: &str) -> String {
         let date_regex =
-            Regex::new(r"(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})\.(\d+)\+00:00").unwrap();
+            Regex::new(r"(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})\.(\d+)Z").unwrap();
         date_regex
             .replace_all(input, "TIMESTAMP")
             .replace("\r\n", "\n")

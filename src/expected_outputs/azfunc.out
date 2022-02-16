@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <testsuites>
-  <testsuite id="0" name="cargo test #0" package="testsuite/cargo test #0" tests="192" errors="0" failures="0" hostname="localhost" timestamp="2020-06-16T06:10:32.081394059+00:00" time="0">
+  <testsuite id="0" name="cargo test #0" package="testsuite/cargo test #0" tests="192" errors="0" failures="0" hostname="localhost" timestamp="2020-06-16T06:10:32.081394059Z" time="0">
     <testcase name="it_converts_from_str" classname="bindings::blob::tests" time="0" />
     <testcase name="it_converts_from_json" classname="bindings::blob::tests" time="0" />
     <testcase name="it_converts_from_string" classname="bindings::blob::tests" time="0" />
@@ -194,9 +194,9 @@
     <testcase name="it_converts_from_stream_data" classname="util::tests" time="0" />
     <testcase name="it_converts_from_string_data" classname="util::tests" time="0" />
   </testsuite>
-  <testsuite id="1" name="cargo test #1" package="testsuite/cargo test #1" tests="0" errors="0" failures="0" hostname="localhost" timestamp="2020-06-16T06:10:32.081394059+00:00" time="0" />
-  <testsuite id="2" name="cargo test #2" package="testsuite/cargo test #2" tests="0" errors="0" failures="0" hostname="localhost" timestamp="2020-06-16T06:10:32.081394059+00:00" time="0" />
-  <testsuite id="3" name="cargo test #3" package="testsuite/cargo test #3" tests="205" errors="0" failures="0" hostname="localhost" timestamp="2020-06-16T06:10:32.081394059+00:00" time="0">
+  <testsuite id="1" name="cargo test #1" package="testsuite/cargo test #1" tests="0" errors="0" failures="0" hostname="localhost" timestamp="2020-06-16T06:10:32.081394059Z" time="0" />
+  <testsuite id="2" name="cargo test #2" package="testsuite/cargo test #2" tests="0" errors="0" failures="0" hostname="localhost" timestamp="2020-06-16T06:10:32.081394059Z" time="0" />
+  <testsuite id="3" name="cargo test #3" package="testsuite/cargo test #3" tests="205" errors="0" failures="0" hostname="localhost" timestamp="2020-06-16T06:10:32.081394059Z" time="0">
     <testcase name="it_converts_to_tokens" classname="codegen::bindings::blob::tests" time="0" />
     <testcase name="it_parses_attribute_arguments" classname="codegen::bindings::blob::tests" time="0" />
     <testcase name="it_requires_the_name_attribute_argument" classname="codegen::bindings::blob::tests" time="0" />
@@ -403,26 +403,26 @@
     <testcase name="it_serializes_string_to_json" classname="codegen::value::tests" time="0" />
     <testcase name="it_serializes_integer_to_json" classname="codegen::value::tests" time="0" />
   </testsuite>
-  <testsuite id="4" name="cargo test #4" package="testsuite/cargo test #4" tests="0" errors="0" failures="0" hostname="localhost" timestamp="2020-06-16T06:10:32.081394059+00:00" time="0" />
-  <testsuite id="5" name="cargo test #5" package="testsuite/cargo test #5" tests="0" errors="0" failures="0" hostname="localhost" timestamp="2020-06-16T06:10:32.081394059+00:00" time="0" />
-  <testsuite id="6" name="cargo test #6" package="testsuite/cargo test #6" tests="0" errors="0" failures="0" hostname="localhost" timestamp="2020-06-16T06:10:32.081394059+00:00" time="0" />
-  <testsuite id="7" name="cargo test #7" package="testsuite/cargo test #7" tests="0" errors="0" failures="0" hostname="localhost" timestamp="2020-06-16T06:10:32.081394059+00:00" time="0" />
-  <testsuite id="8" name="cargo test #8" package="testsuite/cargo test #8" tests="0" errors="0" failures="0" hostname="localhost" timestamp="2020-06-16T06:10:32.081394059+00:00" time="0" />
-  <testsuite id="9" name="cargo test #9" package="testsuite/cargo test #9" tests="0" errors="0" failures="0" hostname="localhost" timestamp="2020-06-16T06:10:32.081394059+00:00" time="0" />
-  <testsuite id="10" name="cargo test #10" package="testsuite/cargo test #10" tests="0" errors="0" failures="0" hostname="localhost" timestamp="2020-06-16T06:10:32.081394059+00:00" time="0" />
-  <testsuite id="11" name="cargo test #11" package="testsuite/cargo test #11" tests="0" errors="0" failures="0" hostname="localhost" timestamp="2020-06-16T06:10:32.081394059+00:00" time="0" />
-  <testsuite id="12" name="cargo test #12" package="testsuite/cargo test #12" tests="0" errors="0" failures="0" hostname="localhost" timestamp="2020-06-16T06:10:32.081394059+00:00" time="0" />
-  <testsuite id="13" name="cargo test #13" package="testsuite/cargo test #13" tests="0" errors="0" failures="0" hostname="localhost" timestamp="2020-06-16T06:10:32.081394059+00:00" time="0" />
-  <testsuite id="14" name="cargo test #14" package="testsuite/cargo test #14" tests="0" errors="0" failures="0" hostname="localhost" timestamp="2020-06-16T06:10:32.081394059+00:00" time="0" />
-  <testsuite id="15" name="cargo test #15" package="testsuite/cargo test #15" tests="0" errors="0" failures="0" hostname="localhost" timestamp="2020-06-16T06:10:32.081394059+00:00" time="0" />
-  <testsuite id="16" name="cargo test #16" package="testsuite/cargo test #16" tests="0" errors="0" failures="0" hostname="localhost" timestamp="2020-06-16T06:10:32.081394059+00:00" time="0" />
-  <testsuite id="17" name="cargo test #17" package="testsuite/cargo test #17" tests="0" errors="0" failures="0" hostname="localhost" timestamp="2020-06-16T06:10:32.081394059+00:00" time="0" />
+  <testsuite id="4" name="cargo test #4" package="testsuite/cargo test #4" tests="0" errors="0" failures="0" hostname="localhost" timestamp="2020-06-16T06:10:32.081394059Z" time="0" />
+  <testsuite id="5" name="cargo test #5" package="testsuite/cargo test #5" tests="0" errors="0" failures="0" hostname="localhost" timestamp="2020-06-16T06:10:32.081394059Z" time="0" />
+  <testsuite id="6" name="cargo test #6" package="testsuite/cargo test #6" tests="0" errors="0" failures="0" hostname="localhost" timestamp="2020-06-16T06:10:32.081394059Z" time="0" />
+  <testsuite id="7" name="cargo test #7" package="testsuite/cargo test #7" tests="0" errors="0" failures="0" hostname="localhost" timestamp="2020-06-16T06:10:32.081394059Z" time="0" />
+  <testsuite id="8" name="cargo test #8" package="testsuite/cargo test #8" tests="0" errors="0" failures="0" hostname="localhost" timestamp="2020-06-16T06:10:32.081394059Z" time="0" />
+  <testsuite id="9" name="cargo test #9" package="testsuite/cargo test #9" tests="0" errors="0" failures="0" hostname="localhost" timestamp="2020-06-16T06:10:32.081394059Z" time="0" />
+  <testsuite id="10" name="cargo test #10" package="testsuite/cargo test #10" tests="0" errors="0" failures="0" hostname="localhost" timestamp="2020-06-16T06:10:32.081394059Z" time="0" />
+  <testsuite id="11" name="cargo test #11" package="testsuite/cargo test #11" tests="0" errors="0" failures="0" hostname="localhost" timestamp="2020-06-16T06:10:32.081394059Z" time="0" />
+  <testsuite id="12" name="cargo test #12" package="testsuite/cargo test #12" tests="0" errors="0" failures="0" hostname="localhost" timestamp="2020-06-16T06:10:32.081394059Z" time="0" />
+  <testsuite id="13" name="cargo test #13" package="testsuite/cargo test #13" tests="0" errors="0" failures="0" hostname="localhost" timestamp="2020-06-16T06:10:32.081394059Z" time="0" />
+  <testsuite id="14" name="cargo test #14" package="testsuite/cargo test #14" tests="0" errors="0" failures="0" hostname="localhost" timestamp="2020-06-16T06:10:32.081394059Z" time="0" />
+  <testsuite id="15" name="cargo test #15" package="testsuite/cargo test #15" tests="0" errors="0" failures="0" hostname="localhost" timestamp="2020-06-16T06:10:32.081394059Z" time="0" />
+  <testsuite id="16" name="cargo test #16" package="testsuite/cargo test #16" tests="0" errors="0" failures="0" hostname="localhost" timestamp="2020-06-16T06:10:32.081394059Z" time="0" />
+  <testsuite id="17" name="cargo test #17" package="testsuite/cargo test #17" tests="0" errors="0" failures="0" hostname="localhost" timestamp="2020-06-16T06:10:32.081394059Z" time="0" />
   <testsuite id="18" name="cargo test #18" package="testsuite/cargo test #18" tests="1" errors="0" failures="0" hostname="localhost" timestamp="TIMESTAMP" time="0">
     <testcase name="src\lib.rs - func (line 47)" time="0">
       <skipped />
     </testcase>
   </testsuite>
-  <testsuite id="19" name="cargo test #19" package="testsuite/cargo test #19" tests="0" errors="0" failures="0" hostname="localhost" timestamp="2020-06-16T06:10:32.081394059+00:00" time="0" />
+  <testsuite id="19" name="cargo test #19" package="testsuite/cargo test #19" tests="0" errors="0" failures="0" hostname="localhost" timestamp="2020-06-16T06:10:32.081394059Z" time="0" />
   <testsuite id="20" name="cargo test #20" package="testsuite/cargo test #20" tests="95" errors="0" failures="0" hostname="localhost" timestamp="TIMESTAMP" time="0">
     <testcase name="Blob (line 39)" classname="srcindingslob.rs - bindings::blob" time="0" />
     <testcase name="Blob (line 26)" classname="srcindingslob.rs - bindings::blob" time="0" />

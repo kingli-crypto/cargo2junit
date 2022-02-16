@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <testsuites>
-  <testsuite id="0" name="cargo test #0" package="testsuite/cargo test #0" tests="5" errors="0" failures="0" hostname="localhost" timestamp="2020-06-15T20:58:06.724822700+00:00" time="0.081743">
-    <testcase name="error_on_garbage" classname="tests" time="0.000213" />
-    <testcase name="failded_single_suite" classname="tests" time="0.000569" />
-    <testcase name="success_single_suite" classname="tests" time="0.000275" />
-    <testcase name="multi_suite_success" classname="tests" time="0.002146" />
-    <testcase name="cargo_project_failure" classname="tests" time="0.07854" />
+  <testsuite id="0" name="cargo test #0" package="testsuite/cargo test #0" tests="5" errors="0" failures="0" hostname="localhost" timestamp="2020-06-15T20:58:06.724822700Z" time="0.081745">
+    <testcase name="error_on_garbage" classname="tests" time="0.0002131" />
+    <testcase name="failded_single_suite" classname="tests" time="0.0005697" />
+    <testcase name="success_single_suite" classname="tests" time="0.0002754" />
+    <testcase name="multi_suite_success" classname="tests" time="0.0021462" />
+    <testcase name="cargo_project_failure" classname="tests" time="0.0785406" />
   </testsuite>
 </testsuites>
