@@ -132,8 +132,16 @@ fn detect_error(stdout: &Option<String>, stderr: &Option<String>) -> Option<Stri
         }
     }
 
-    // guess
+    // unwrap errors
     let exp = regex::RegexBuilder::new(r"[Ee]rror:.+").build().unwrap();
+    if let Some(stdout) = stdout {
+        if let Some(body) = exp.find(stdout) {
+            return Some(body.as_str().trim().to_string());
+        }
+    }
+
+    // thread panicked
+    let exp = regex::RegexBuilder::new(r"thread .+ panicked at .+").build().unwrap();
     if let Some(stdout) = stdout {
         if let Some(body) = exp.find(stdout) {
             return Some(body.as_str().trim().to_string());
