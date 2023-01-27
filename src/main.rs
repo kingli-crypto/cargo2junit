@@ -155,6 +155,29 @@ fn split_name(full_name: &str) -> (&str, String) {
     (name, module_path)
 }
 
+/// Attempt to populate failure with meaningful error messages
+/// If stderr is valid / non trivial, use that
+/// Otherwise attempt to extract error from stdout with regex
+fn detect_error(stdout: &Option<String>, stderr: &Option<String>) -> Option<String> {
+    if let Some(body) = stderr {
+        if !body.trim().is_empty() {
+            return Some(body.to_string());
+        }
+    }
+
+    // guess
+    let exp = regex::RegexBuilder::new(r"[\n^]([Ee]rror: .+)$")
+        .build()
+        .unwrap();
+    if let Some(stdout) = stdout {
+        if let Some(body) = exp.find(stdout) {
+            return Some(body.as_str().trim().to_string());
+        }
+    }
+
+    None
+}
+
 fn parse<T: BufRead>(
     input: T,
     suite_name_prefix: &str,
@@ -243,7 +266,7 @@ fn parse<T: BufRead>(
                         let (name, module_path) = split_name(&name);
                         let mut tc = TestCase::success(&name, duration);
                         tc.set_classname(module_path.as_str());
-                        current_suite.add_testcase(tc,);
+                        current_suite.add_testcase(tc);
                     }
                     TestEvent::Failed {
                         name,
@@ -254,13 +277,15 @@ fn parse<T: BufRead>(
                         let detail = tests.remove(name).unwrap();
 
                         let (name, module_path) = split_name(&name);
-                        let mut failure = TestCaseBuilder::failure(
+                        let error_message = detect_error(stdout, stderr);
+
+                        let mut failure = TestCase::failure(
                             &name,
                             precision.trunc(duration.unwrap_or(detail.get_duration(now))),
                             "cargo test",
                             &format!("failed {}::{}", module_path.as_str(), &name),
                         );
-                            failure.set_classname(module_path.as_str());
+                        failure.set_classname(module_path.as_str());
 
                         fn truncate(s: &str, max_len: usize) -> Cow<'_, str> {
                             if s.len() > max_len {
@@ -277,12 +302,17 @@ fn parse<T: BufRead>(
                             }
                         }
 
-                        if let Some(stdout) = stdout {
-                            failure.set_system_out(&truncate(stdout, max_out_len));
-                        }
+                        // if a error message can be guessed, use that
+                        if let Some(message) = error_message {
+                            failure.set_system_out(&truncate(&message, max_out_len));
+                        } else {
+                            if let Some(stdout) = stdout {
+                                failure.set_system_out(&truncate(stdout, max_out_len));
+                            }
 
-                        if let Some(stderr) = stderr {
-                            failure.set_system_err(&truncate(stderr, max_out_len));
+                            if let Some(stderr) = stderr {
+                                failure.set_system_err(&truncate(stderr, max_out_len));
+                            }
                         }
 
                         current_suite.add_testcase(failure);
@@ -455,6 +485,19 @@ mod tests {
         )
         .expect("Could not parse test input");
         assert_output(&report, include_bytes!("expected_outputs/failed.out"));
+    }
+
+    #[test]
+    fn single_suite_failed_guessed() {
+        let report = parse_bytes(
+            include_bytes!("test_inputs/failed_guessed.json"),
+            SYSTEM_OUT_MAX_LEN,
+        )
+        .expect("Could not parse test input");
+        assert_output(
+            &report,
+            include_bytes!("expected_outputs/failed_guessed.out"),
+        );
     }
 
     #[test]
