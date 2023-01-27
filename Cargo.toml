@@ -15,7 +15,7 @@ license = "MIT"
 maintenance = { status = "experimental" }
 
 [dependencies]
-junit-report = "0.7.0"
+junit-report = { git = "https://github.com/kingli-crypto/junit-report-rs", rev = "cf51ed9075219befdfb67d4dff55eceb4c4216be" }
 serde_json = "1.0.38"
 serde = { version = "1.0", features = ["derive"] }
 strip-ansi-escapes = "0.1.0"

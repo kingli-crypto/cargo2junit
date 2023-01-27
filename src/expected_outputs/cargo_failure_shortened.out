@@ -38,6 +38,14 @@ This fail
 ', tests\testsuite\support\cross_compile.rs:92:5
 note: Run with `RUST_BACKTRACE=1` for a backtrace.
 ]]></failure>
+      <system-out><![CDATA[thread 'aaa_trigger_cross_compile_disabled_check' panicked at 'Cannot cross compile to i686-pc-windows-msvc.
+
+This fail
+[...TRUNCATED...]
+86-pc-windows-msvc
+', tests\testsuite\support\cross_compile.rs:92:5
+note: Run with `RUST_BACKTRACE=1` for a backtrace.
+]]></system-out>
     </testcase>
     <testcase name="alt_reg_metadata" time="0" classname="alt_registry" />
     <testcase name="cannot_publish_to_crates_io_with_registry_dependency" time="0" classname="alt_registry" />
@@ -348,6 +356,15 @@ Caused by:
   failed to acquire username/password from local configuration
 ', tests\testsuite\support\mod.rs:794:13
 ]]></failure>
+      <system-out><![CDATA[running `C:\src\rust-lang\cargo\target\debug\cargo.exe build -v`
+running `C:\src\rust-lang\cargo\target\debug\cargo.exe
+[...TRUNCATED...]
+ed
+
+Caused by:
+  failed to acquire username/password from local configuration
+', tests\testsuite\support\mod.rs:794:13
+]]></system-out>
     </testcase>
     <testcase name="build_lib_only" time="0" classname="build_lib" />
     <testcase name="https_something_happens" time="0" classname="build_auth" />

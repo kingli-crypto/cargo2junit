@@ -41,6 +41,17 @@ Alternatively, you can install the necessary libraries for cross-compilation wit
 ', tests\testsuite\support\cross_compile.rs:92:5
 note: Run with `RUST_BACKTRACE=1` for a backtrace.
 ]]></failure>
+      <system-out><![CDATA[thread 'aaa_trigger_cross_compile_disabled_check' panicked at 'Cannot cross compile to i686-pc-windows-msvc.
+
+This failure can be safely ignored. If you would prefer to not see this
+failure, you can set the environment variable CFG_DISABLE_CROSS_TESTS to "1".
+
+Alternatively, you can install the necessary libraries for cross-compilation with
+
+    rustup target add i686-pc-windows-msvc
+', tests\testsuite\support\cross_compile.rs:92:5
+note: Run with `RUST_BACKTRACE=1` for a backtrace.
+]]></system-out>
     </testcase>
     <testcase name="alt_reg_metadata" time="0" classname="alt_registry" />
     <testcase name="cannot_publish_to_crates_io_with_registry_dependency" time="0" classname="alt_registry" />
@@ -381,6 +392,45 @@ Caused by:
   failed to acquire username/password from local configuration
 ', tests\testsuite\support\mod.rs:794:13
 ]]></failure>
+      <system-out><![CDATA[running `C:\src\rust-lang\cargo\target\debug\cargo.exe build -v`
+running `C:\src\rust-lang\cargo\target\debug\cargo.exe build`
+thread 'build_auth::http_auth_offered' panicked at '
+Expected: execs
+    but: expected to find:
+[UPDATING] git repository `http://127.0.0.1:33960/foo/bar`
+[ERROR] failed to load source for a dependency on `bar`
+
+Caused by:
+  Unable to update http://127.0.0.1:33960/foo/bar
+
+Caused by:
+  failed to clone into: [..]
+
+Caused by:
+  failed to authenticate when downloading repository
+attempted to find username/password via `credential.helper`, but [..]
+
+Caused by:
+
+
+did not find in output:
+    Updating git repository `http://127.0.0.1:33960/foo/bar`
+error: failed to load source for a dependency on `bar`
+
+Caused by:
+  Unable to update http://127.0.0.1:33960/foo/bar
+
+Caused by:
+  failed to clone into: C:\src\rust-lang\cargo\target\cit\t263\home\.cargo\git\db\bar-8cbd35f4772f62e3
+
+Caused by:
+  failed to authenticate when downloading repository
+attempted to find username/password via git's `credential.helper` support, but failed
+
+Caused by:
+  failed to acquire username/password from local configuration
+', tests\testsuite\support\mod.rs:794:13
+]]></system-out>
     </testcase>
     <testcase name="build_lib_only" time="0" classname="build_lib" />
     <testcase name="https_something_happens" time="0" classname="build_auth" />

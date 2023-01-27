@@ -327,8 +327,7 @@ mod tests {
 
     fn normalize(input: &str) -> String {
         let date_regex =
-            Regex::new(r"(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})\.(\d+)(Z|\+00:00)")
-                .unwrap();
+            Regex::new(r"(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})\.(\d+)Z").unwrap();
         date_regex
             .replace_all(input.trim(), "TIMESTAMP")
             .replace("\r\n", "\n")
