@@ -122,6 +122,27 @@ fn split_name(full_name: &str) -> (&str, String) {
     (name, module_path)
 }
 
+/// Attempt to populate failure with meaningful error messages
+/// If stderr is valid / non trivial, use that
+/// Otherwise attempt to extract error from stdout with regex
+fn detect_error(stdout: &Option<String>, stderr: &Option<String>) -> Option<String> {
+    if let Some(body) = stderr {
+        if !body.trim().is_empty() {
+            return Some(body.to_string());
+        }
+    }
+
+    // guess
+    let exp = regex::RegexBuilder::new(r"[Ee]rror:.+").build().unwrap();
+    if let Some(stdout) = stdout {
+        if let Some(body) = exp.find(stdout) {
+            return Some(body.as_str().trim().to_string());
+        }
+    }
+
+    None
+}
+
 fn parse<T: BufRead>(
     input: T,
     suite_name_prefix: &str,
@@ -210,11 +231,15 @@ fn parse<T: BufRead>(
                         assert!(tests.remove(name));
                         let (name, module_path) = split_name(name);
 
+                        let error_message = detect_error(stdout, stderr);
+
                         let mut failure = TestCase::failure(
                             name,
                             duration,
                             "cargo test",
-                            &format!("failed {}::{}", module_path.as_str(), &name),
+                            &(error_message.unwrap_or_else(|| {
+                                format!("failed {}::{}", module_path.as_str(), &name)
+                            })),
                         );
                         failure.set_classname(module_path.as_str());
 
@@ -267,14 +292,20 @@ fn parse<T: BufRead>(
 
 fn determine_exit_code(report: &Report) -> Result<()> {
     if report.testsuites().is_empty() {
-        Err(Error::new(ErrorKind::NotFound, "No test suite results were found.".to_owned()))
+        Err(Error::new(
+            ErrorKind::NotFound,
+            "No test suite results were found.".to_owned(),
+        ))
     } else if report
         .testsuites()
         .iter()
         .flat_map(|suite| suite.testcases().iter())
         .any(|testcase| testcase.is_error() || testcase.is_failure())
     {
-        Err(Error::new(ErrorKind::Other, "One or more tests failed.".to_owned()))
+        Err(Error::new(
+            ErrorKind::Other,
+            "One or more tests failed.".to_owned(),
+        ))
     } else {
         Ok(())
     }
@@ -307,7 +338,7 @@ fn main() -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::SYSTEM_OUT_MAX_LEN;
-    use crate::{parse, determine_exit_code};
+    use crate::{determine_exit_code, parse};
     use junit_report::*;
     use regex::Regex;
     use std::io::*;
@@ -417,6 +448,19 @@ mod tests {
     }
 
     #[test]
+    fn single_suite_failed_guessed() {
+        let report = parse_bytes(
+            include_bytes!("test_inputs/failed_guessed.json"),
+            SYSTEM_OUT_MAX_LEN,
+        )
+        .expect("Could not parse test input");
+        assert_output(
+            &report,
+            include_bytes!("expected_outputs/failed_guessed.out"),
+        );
+    }
+
+    #[test]
     fn single_suite_failed_stderr_only() {
         let report = parse_bytes(
             include_bytes!("test_inputs/failed_stderr.json"),
@@ -502,7 +546,7 @@ mod tests {
             SYSTEM_OUT_MAX_LEN,
         )
         .expect("Could not parse test input");
-        
+
         assert!(determine_exit_code(&report).is_ok());
     }
 }
