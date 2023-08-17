@@ -132,16 +132,22 @@ fn detect_error(stdout: &Option<String>, stderr: &Option<String>) -> Option<Stri
         }
     }
 
-    // unwrap errors
-    let exp = regex::RegexBuilder::new(r"[Ee]rror:.+").build().unwrap();
+    // thread panicked
+    let exp = regex::RegexBuilder::new(r"thread .+ panicked at .+")
+        .dot_matches_new_line(true)
+        .build()
+        .unwrap();
     if let Some(stdout) = stdout {
         if let Some(body) = exp.find(stdout) {
             return Some(body.as_str().trim().to_string());
         }
     }
 
-    // thread panicked
-    let exp = regex::RegexBuilder::new(r"thread .+ panicked at .+").build().unwrap();
+    // unwrap errors
+    let exp = regex::RegexBuilder::new(r"[Ee]rror:.+")
+        .dot_matches_new_line(true)
+        .build()
+        .unwrap();
     if let Some(stdout) = stdout {
         if let Some(body) = exp.find(stdout) {
             return Some(body.as_str().trim().to_string());
