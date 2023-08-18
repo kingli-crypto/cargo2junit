@@ -1,12 +1,14 @@
+#![feature(let_chains)]
 extern crate junit_report;
 extern crate serde;
 
-use junit_report::*;
-use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
 use std::collections::BTreeSet;
 use std::env;
 use std::io::*;
+
+use junit_report::*;
+use serde::{Deserialize, Serialize};
 
 const SYSTEM_OUT_MAX_LEN: usize = 65536;
 
@@ -157,6 +159,26 @@ fn detect_error(stdout: &Option<String>, stderr: &Option<String>) -> Option<Stri
     None
 }
 
+fn detect_owner(stdout: &Option<String>, stderr: &Option<String>) -> Option<String> {
+    let exp = regex::RegexBuilder::new(r"Chain contact point: ?(\w+)")
+        .build()
+        .unwrap();
+
+    if let Some(stdout) = stdout &&
+        let Some(cap) = exp.captures_iter(stdout).last() &&
+        let Some(name) = cap.get(1) {
+        return Some(name.as_str().to_string());
+    }
+
+    if let Some(stderr) = stderr &&
+        let Some(cap) = exp.captures_iter(stderr).last() &&
+        let Some(name) = cap.get(1) {
+        return Some(name.as_str().to_string());
+    }
+
+    None
+}
+
 fn parse<T: BufRead>(
     input: T,
     suite_name_prefix: &str,
@@ -257,6 +279,10 @@ fn parse<T: BufRead>(
                         );
                         failure.set_classname(module_path.as_str());
 
+                        if let Some(owner) = detect_owner(stdout, stderr) {
+                            failure.set_owner(&owner);
+                        }
+
                         fn truncate(s: &str, max_len: usize) -> Cow<'_, str> {
                             if s.len() > max_len {
                                 let truncated_msg = "[...TRUNCATED...]";
@@ -351,11 +377,14 @@ fn main() -> Result<()> {
 
 #[cfg(test)]
 mod tests {
-    use super::SYSTEM_OUT_MAX_LEN;
-    use crate::{determine_exit_code, parse};
+    use std::io::*;
+
     use junit_report::*;
     use regex::Regex;
-    use std::io::*;
+
+    use crate::{determine_exit_code, parse};
+
+    use super::SYSTEM_OUT_MAX_LEN;
 
     fn parse_bytes(bytes: &[u8], max_stdout_len: usize) -> Result<Report> {
         parse(

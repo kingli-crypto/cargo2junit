@@ -48,7 +48,7 @@ checksum = "1aab8fc367588b89dcee83ab0fd66b72b50b72fa1904d7095045ace2b0c81c35"
 [[package]]
 name = "junit-report"
 version = "0.7.1"
-source = "git+https://github.com/kingli-crypto/junit-report-rs?rev=cf51ed9075219befdfb67d4dff55eceb4c4216be#cf51ed9075219befdfb67d4dff55eceb4c4216be"
+source = "git+https://github.com/kingli-crypto/junit-report-rs?rev=914928faf09d86bd1955a974731d1bd470ada5f0#914928faf09d86bd1955a974731d1bd470ada5f0"
 dependencies = [
  "derive-getters",
  "strip-ansi-escapes",
