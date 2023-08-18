@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <testsuites>
-  <testsuite id="0" name="cargo test #0" package="testsuite/cargo test #0" tests="25" errors="0" failures="0" hostname="localhost" timestamp="2022-07-26T19:36:57.395501958Z" time="0">
+  <testsuite id="0" name="cargo test #0" package="testsuite/cargo test #0" tests="25" errors="0" failures="0" hostname="localhost" timestamp="2023-08-18T11:58:35.32804Z" time="0">
     <testcase name="bad_parsing" time="0" classname="core::package_id_spec::tests" />
     <testcase name="good_parsing" time="0" classname="core::package_id_spec::tests" />
     <testcase name="invalid_version_handled_nicely" time="0" classname="core::package_id::tests" />
@@ -27,10 +27,10 @@
     <testcase name="with_retry_finds_nested_spurious_errors" time="0" classname="util::network" />
     <testcase name="test_lev_distance" time="0" classname="util::lev_distance" />
   </testsuite>
-  <testsuite id="1" name="cargo test #1" package="testsuite/cargo test #1" tests="1507" errors="0" failures="2" hostname="localhost" timestamp="2022-07-26T19:36:57.395501958Z" time="0">
+  <testsuite id="1" name="cargo test #1" package="testsuite/cargo test #1" tests="1507" errors="0" failures="2" hostname="localhost" timestamp="2023-08-18T11:58:35.32804Z" time="0">
     <testcase name="bad_registry_name" time="0" classname="alt_registry" />
     <testcase name="aaa_trigger_cross_compile_disabled_check" time="0" classname="">
-      <failure type="cargo test" message="failed ::aaa_trigger_cross_compile_disabled_check"><![CDATA[thread 'aaa_trigger_cross_compile_disabled_check' panicked at 'Cannot cross compile to i686-pc-windows-msvc.
+      <failure type="cargo test" message="thread &apos;aaa_trigger_cross_compile_disabled_check&apos; panicked at &apos;Cannot cross compile to i686-pc-windows-msvc.&#xA;&#xA;This failure can be safely ignored. If you would prefer to not see this&#xA;failure, you can set the environment variable CFG_DISABLE_CROSS_TESTS to &quot;1&quot;.&#xA;&#xA;Alternatively, you can install the necessary libraries for cross-compilation with&#xA;&#xA;    rustup target add i686-pc-windows-msvc&#xA;&apos;, tests\testsuite\support\cross_compile.rs:92:5&#xA;note: Run with `RUST_BACKTRACE=1` for a backtrace."><![CDATA[thread 'aaa_trigger_cross_compile_disabled_check' panicked at 'Cannot cross compile to i686-pc-windows-msvc.
 
 This fail
 [...TRUNCATED...]
@@ -347,7 +347,7 @@ note: Run with `RUST_BACKTRACE=1` for a backtrace.
     <testcase name="ssh_something_happens" time="0" classname="build_auth" />
     <testcase name="build_with_no_lib" time="0" classname="build_lib" />
     <testcase name="http_auth_offered" time="0" classname="build_auth">
-      <failure type="cargo test" message="failed build_auth::http_auth_offered"><![CDATA[running `C:\src\rust-lang\cargo\target\debug\cargo.exe build -v`
+      <failure type="cargo test" message="thread &apos;build_auth::http_auth_offered&apos; panicked at &apos;&#xA;Expected: execs&#xA;    but: expected to find:&#xA;[UPDATING] git repository `http://127.0.0.1:33960/foo/bar`&#xA;[ERROR] failed to load source for a dependency on `bar`&#xA;&#xA;Caused by:&#xA;  Unable to update http://127.0.0.1:33960/foo/bar&#xA;&#xA;Caused by:&#xA;  failed to clone into: [..]&#xA;&#xA;Caused by:&#xA;  failed to authenticate when downloading repository&#xA;attempted to find username/password via `credential.helper`, but [..]&#xA;&#xA;Caused by:&#xA;&#xA;&#xA;did not find in output:&#xA;    Updating git repository `http://127.0.0.1:33960/foo/bar`&#xA;error: failed to load source for a dependency on `bar`&#xA;&#xA;Caused by:&#xA;  Unable to update http://127.0.0.1:33960/foo/bar&#xA;&#xA;Caused by:&#xA;  failed to clone into: C:\src\rust-lang\cargo\target\cit\t263\home\.cargo\git\db\bar-8cbd35f4772f62e3&#xA;&#xA;Caused by:&#xA;  failed to authenticate when downloading repository&#xA;attempted to find username/password via git&apos;s `credential.helper` support, but failed&#xA;&#xA;Caused by:&#xA;  failed to acquire username/password from local configuration&#xA;&apos;, tests\testsuite\support\mod.rs:794:13"><![CDATA[running `C:\src\rust-lang\cargo\target\debug\cargo.exe build -v`
 running `C:\src\rust-lang\cargo\target\debug\cargo.exe
 [...TRUNCATED...]
 ed

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <testsuites>
-  <testsuite id="0" name="cargo test #0" package="testsuite/cargo test #0" tests="6" errors="0" failures="0" hostname="localhost" timestamp="2022-07-26T19:36:57.166823209Z" time="0.197">
+  <testsuite id="0" name="cargo test #0" package="testsuite/cargo test #0" tests="6" errors="0" failures="0" hostname="localhost" timestamp="2023-08-18T11:58:31.325039Z" time="0.197">
     <testcase name="error_on_garbage" time="0" classname="tests" />
     <testcase name="failded_single_suite" time="0.001" classname="tests" />
     <testcase name="success_single_suite" time="0.001" classname="tests" />

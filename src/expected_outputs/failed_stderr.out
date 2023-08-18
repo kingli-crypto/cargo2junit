@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <testsuites>
-  <testsuite id="0" name="cargo test #0" package="testsuite/cargo test #0" tests="2" errors="0" failures="1" hostname="localhost" timestamp="2022-07-26T19:36:56.949202548Z" time="0">
+  <testsuite id="0" name="cargo test #0" package="testsuite/cargo test #0" tests="2" errors="0" failures="1" hostname="localhost" timestamp="2023-08-18T11:58:26.866087Z" time="0">
     <testcase name="fails" time="0" classname="tests">
-      <failure type="cargo test" message="failed tests::fails"><![CDATA[thread 'tests::fails' panicked at 'assertion failed: `(left == right)`
+      <failure type="cargo test" message="thread &apos;tests::fails&apos; panicked at &apos;assertion failed: `(left == right)`&#xA;  left: `4`,&#xA; right: `3`&apos;, src/lib.rs:10:9&#xA;note: Run with `RUST_BACKTRACE=1` for a backtrace.&#xA;"><![CDATA[thread 'tests::fails' panicked at 'assertion failed: `(left == right)`
   left: `4`,
  right: `3`', src/lib.rs:10:9
 note: Run with `RUST_BACKTRACE=1` for a backtrace.
 ]]></failure>
-      <system-out><![CDATA[thread 'tests::fails' panicked at 'assertion failed: `(left == right)`
+      <system-err><![CDATA[thread 'tests::fails' panicked at 'assertion failed: `(left == right)`
   left: `4`,
  right: `3`', src/lib.rs:10:9
 note: Run with `RUST_BACKTRACE=1` for a backtrace.
-]]></system-out>
+]]></system-err>
     </testcase>
     <testcase name="success" time="0" classname="tests" />
   </testsuite>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <testsuites>
-  <testsuite id="0" name="cargo test #0" package="testsuite/cargo test #0" tests="2" errors="0" failures="1" hostname="localhost" timestamp="TIMESTAMP" time="0">
+  <testsuite id="0" name="cargo test #0" package="testsuite/cargo test #0" tests="2" errors="0" failures="1" hostname="localhost" timestamp="2023-08-18T11:58:25.815589Z" time="0">
     <testcase name="fails" time="0" classname="tests">
       <failure type="cargo test" message="Error: system failure"><![CDATA[Some log line
 Some log line
